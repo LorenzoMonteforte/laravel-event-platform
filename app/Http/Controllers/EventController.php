@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Models\Tag;
 
 class EventController extends Controller
 {
@@ -26,7 +27,8 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
+        $tags = Tag::all();
+        return view("create_event", compact("tags"));
     }
 
     /**
@@ -37,7 +39,17 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        //
+        $data = $request->all();
+        $new_event = new Event();
+        $new_event->name = $data["name"];
+        $new_event->description = $data["description"];
+        $new_event->city = $data["city"];
+        $new_event->date = $data["date"];
+        $new_event->save();
+        if($request->tags){
+            $new_event->tags()->attach($request->tags);
+        }
+        return redirect()->route("admin.events.index");
     }
 
     /**
@@ -46,9 +58,10 @@ class EventController extends Controller
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function show(Event $event)
+    public function show($id)
     {
-        //
+        $event = Event::find($id);
+        return view("event_detail", compact("event"));
     }
 
     /**
@@ -57,9 +70,11 @@ class EventController extends Controller
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function edit(Event $event)
+    public function edit($id)
     {
-        //
+        $event = Event::find($id);
+        $tags = Tag::all();
+        return view("edit_event", compact("event", "tags"));
     }
 
     /**
@@ -69,9 +84,19 @@ class EventController extends Controller
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEventRequest $request, Event $event)
+    public function update(UpdateEventRequest $request, $id)
     {
-        //
+        $data = $request->all();
+        $event = Event::find($id);
+        $event->name = $data["name"];
+        $event->description = $data["description"];
+        $event->city = $data["city"];
+        $event->date = $data["date"];
+        $event->update();
+        if($request->tags){
+            $event->tags()->sync($request->tags);
+        }
+        return redirect()->route("admin.events.show", $event->id);
     }
 
     /**
@@ -80,8 +105,10 @@ class EventController extends Controller
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Event $event)
+    public function destroy($id)
     {
-        //
+        $event = Event::find($id);
+        $event->delete();
+        return redirect()->route("admin.events.index");
     }
 }

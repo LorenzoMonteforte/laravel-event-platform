@@ -21,6 +21,9 @@
     </div>
 </div>
 <div>
+    <a href="{{ route('admin.events.create') }}">Aggiungi evento</a>
+</div>
+<div>
     <a href="{{ route('admin.events.index') }}">Mostra eventi</a>
 </div>
 @endsection
