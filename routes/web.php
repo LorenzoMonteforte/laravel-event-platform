@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController; //<---- Import del controller precedentemente creato!
 use App\Http\Controllers\EventController;
+use App\Models\Event;
 
 /* ... */
 
@@ -21,6 +22,21 @@ Route::middleware(['auth'])
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource("events", EventController::class);
+});
+
+Route::get("/api", function(){
+    return response()->json([
+        "name" => "Lorenzo",
+        "surname" => "Monteforte",
+        "date_of_birth" => "1999-11-02"
+    ]);
+});
+
+Route::get("/api2", function(){
+    $data = Event::all();
+    return response()->json(
+        $data
+    );
 });
 
 require __DIR__.'/auth.php';
