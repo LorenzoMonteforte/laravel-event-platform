@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\EventController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Event;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,9 +27,4 @@ Route::get("/api", function(){
     ]);
 });
 
-Route::get("/api2", function(){
-    $data = Event::all();
-    return response()->json(
-        $data
-    );
-});
+Route::get("/api2", [EventController::class, "index"]);
