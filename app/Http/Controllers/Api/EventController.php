@@ -9,9 +9,11 @@ use App\Models\Event;
 class EventController extends Controller
 {
     public function index(){
-        $data = Event::all();
-        return response()->json(
-            $data
-        );
+        $results = Event::with("tags")->get();
+        $data = [
+            "success" => true,
+            "payload" => $results
+        ];
+        return response()->json($data);
     }
 }
